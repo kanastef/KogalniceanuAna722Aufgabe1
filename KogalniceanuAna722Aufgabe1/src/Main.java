@@ -11,6 +11,16 @@ public class Main {
         fallAkten.forEach(System.out::println);
 
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\nEnter a letter to search patients by:");
+        String searchName = scanner.nextLine().trim();
+        fallAkten.stream()
+                .map(FallAkten::getPatient)
+                .filter(Patient -> Patient.startsWith(searchName))
+                .distinct()
+                .forEach(System.out::println);
+
+        System.out.println("Sicknesses from patients with Fieber: ");
         fallAkten.stream()
                 .filter(log -> Objects.equals(log.getSymptom(), "Fieber"))
                 .sorted(Comparator.comparing(FallAkten::getDate))
@@ -18,17 +28,5 @@ public class Main {
                 .forEach(System.out::println);
         System.out.println();
 
-        Map<String, Integer> hospitals = new HashMap<>();
-        for (FallAkten log : fallAkten) {
-
-            hospitals.merge(log.getHospital(), points, Integer::sum);
-        }
-
-        List<String> results = hospitals.entrySet().stream()
-                .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
-                .map(entry -> entry.getKey() + "&" + entry.getValue())
-                .collect(Collectors.toList());
-
-        Files.write(Path.of(outputFilePath), results);
     }
 }
